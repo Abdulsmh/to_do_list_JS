@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-4 relative">
+    <!-- Particle Background -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none h-screen">
+        <!-- Top Right -->
+        <img src="https://th.bing.com/th/id/R.e2a500a1e49036d0f12639471802131c?rik=bWZRA5qdGMrS4w&pid=ImgRaw&r=0"
+            alt="Particle" class="absolute w-full h-full object-cover opacity-100">
+
+        <!-- Bottom Left -->
+        <img src="https://html.webtend.net/landio/assets/img/particle/particle-1.png" alt="Particle"
+            class="absolute bottom-10 left-10 w-16 animate-bounce">
+
+        <!-- Top Left (smaller for balance) -->
+        <img src="https://html.webtend.net/landio/assets/img/particle/particle-2.png" alt="Particle"
+            class="absolute top-20 left-20 w-12 animate-ping">
+
+        <!-- Bottom Right (mirroring top-left) -->
+        <img src="https://html.webtend.net/landio/assets/img/particle/particle-4.png" alt="Particle"
+            class="absolute bottom-20 right-20 w-12 animate-pulse">
+    </div>
+
+    <!-- Main Card -->
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6 mt-24 relative z-10">
+        <h1 class="text-2xl font-bold mb-4 text-center pb-10">My Todo List</h1>
+        <div class="flex mb-4">
+            <input type="text" id="taskInput" class="flex-1 border p-2 rounded" placeholder="Enter task">
+            <button onclick="addTask()" class="bg-blue-500 text-white p-2 rounded ml-2">Add</button>
+        </div>
+        <div id="taskList">
+            <p class="text-gray-500">No tasks yet</p>
+        </div>
+    </div>
+
+    <script>
+        // VARIABLES
+        let tasks = []; // Array to store tasks
+
+        // FUNCTIONS
+        function addTask() {
+            let taskInput = document.getElementById('taskInput');
+            let taskText = taskInput.value;
+
+            // CONDITIONAL - check if empty
+            if (taskText === '') {
+                alert('Please enter a task');
+                return;
+            }
+
+            // OBJECT - create task object
+            let task = {
+                id: tasks.length + 1,
+                text: taskText,
+                completed: false
+            };
+
+            // ARRAY - add to tasks array
+            tasks.push(task);
+
+            // Clear input
+            taskInput.value = '';
+
+            // Update display
+            displayTasks();
+        }
+
+        function deleteTask(taskId) {
+            // Create new array without the deleted task
+            let newTasks = [];
+            newTasks = tasks.filter(task => task.id !== taskId);
+            tasks = newTasks;
+            displayTasks();
+        }
+
+        function toggleTask(taskId) {
+            tasks.map(task => {
+                if (task.id === taskId) {
+                    task.completed = !task.completed;
+                }
+                return task;
+            });
+            displayTasks();
+        }
+
+        function displayTasks() {
+            let taskList = document.getElementById('taskList');
+
+            // CONDITIONAL - check if no tasks
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p class="text-gray-500">No tasks yet</p>';
+                return;
+            }
+
+            let html = '';
+            html = tasks.map(task => {
+                return `
+                        <div class="border-b py-2 justify-between flex items-center">
+                            <span class="${task.completed ? 'line-through text-gray-500' : ''}">${task.text}</span>
+                            <div class="space-x-2">
+                                <button onclick="toggleTask(${task.id})" class="bg-green-500 text-white p-1 rounded text-sm ml-2">
+                                    ${task.completed ? 'Undo' : 'Done'}
+                                </button>
+                                <button onclick="deleteTask(${task.id})" class="bg-red-500 text-white p-1 rounded text-sm ml-1">Delete</button>
+                            </div>
+                        </div>
+                    `;
+            }).join('');
+
+            taskList.innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>
